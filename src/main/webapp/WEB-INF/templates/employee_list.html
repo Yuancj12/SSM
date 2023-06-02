@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>员工列表</title>
+    <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+<table id="dataTable">
+    <tr>
+        <th colspan="6">员工列表</th>
+    </tr>
+    <tr>
+        <th>流水号</th>
+        <th>员工姓名</th>
+        <th>年龄</th>
+        <th>性别</th>
+        <th>邮箱</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="employee,status:${page.list}">
+        <td th:text="${status.count}"></td>
+        <td th:text="${employee.empName}"></td>
+        <td th:text="${employee.age}"></td>
+        <td th:text="${employee.sex}"></td>
+        <td th:text="${employee.email}"></td>
+        <td>
+            <a @click="deleteEmployee" th:href="@{'/employee/'+${employee.empId}}">删除</a>
+            <a th:href="@{'/employee/'+${employee.empId}}">修改(未开发)</a>    <!--修改功能无效-->
+        </td>
+    </tr>
+</table>
+<div style="text-align:center">
+    <a th:if="${page.hasPreviousPage}" th:href="@{/employee/page/1}">返回首页</a>
+    <a th:if="${page.hasPreviousPage}" th:href="@{'/employee/page/'+${page.prePage}}">上一页</a>
+    <span th:each="num:${page.navigatepageNums}">
+        <a th:if="${page.pageNum==num}" style="color: aqua"  th:href="@{'/employee/page/'+${num}}" th:text="'['+${num}+']'"></a>
+        <a th:if="${page.pageNum!=num}" th:href="@{'/employee/page/'+${num}}" th:text="'['+${num}+']'"></a>
+    </span>
+    <a th:if="${page.hasNextPage}" th:href="@{'/employee/page/'+${page.nextPage}}">下一页</a>
+    <a th:if="${page.hasNextPage}" th:href="@{'/employee/page/'+${page.pages}}">末页</a>
+</div>
+<a style="text-align: right"  th:href="@{/toAdd}">添加</a>
+<form id="deleteForm" method="post">
+    <input type="hidden" name="_method" value="delete">
+</form>
+<script type="text/javascript" th:src="@{/static/js/vue.js}"></script>
+<script type="text/javascript">
+    var vue = new Vue({
+        el:"#dataTable",
+        methods:{
+            deleteEmployee:function (event){
+                //根据id获取表单元素
+                var deleteForm=document.getElementById("deleteForm");
+                //将触发点击事件的超链接的href赋值给表单的action
+                deleteForm.action=event.target.href;
+                //提交表单
+                deleteForm.submit();
+                //取消超链接的默认行为
+                event.preventDefault();
+            }
+        }
+    })
+
+</script>
+
+</body>
+</html>
